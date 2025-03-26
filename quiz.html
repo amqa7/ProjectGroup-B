@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz | Computational Thinking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Computational Thinking Quiz</h1>
+    <p class="subtitle">Test your knowledge</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="concepts.html">Core Concepts</a>
+      <a href="flashcards.html">Flashcards</a>
+      <a href="quiz.html" class="active">Quiz</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="card" id="startScreen">
+      <h2>Interactive Quiz</h2>
+      <p>Choose a category and test your knowledge. All questions will be shown at once!</p>
+      
+      <div class="btn-group" style="margin: 20px 0;">
+        <button id="allBtn" class="btn">All Topics</button>
+        <button id="conceptsBtn" class="btn btn-outline">Concepts</button>
+        <button id="algorithmsBtn" class="btn btn-outline">Algorithms</button>
+        <button id="dataBtn" class="btn btn-outline">Data Structures</button>
+      </div>
+    </div>
+
+    <div id="quizContainer" class="card" style="display: none;">
+      <div id="questionArea"></div>
+      <button id="submitBtn" class="btn" style="margin-top: 20px;">Submit Quiz</button>
+    </div>
+
+    <div id="results" class="card" style="display: none;">
+      <h3>Quiz Results</h3>
+      <p>Score: <span id="score">0</span>/<span id="total">0</span></p>
+      <div id="answerFeedback"></div>
+      <button id="newQuizBtn" class="btn">Try Another Quiz</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 COMP11012 Computational Thinking - The University of Manchester</p>
+  </footer>
+
+  <script>
+    // Enhanced question banks
+    const questionBanks = {
+      concepts: [
+        {
+          question: "What is decomposition?",
+          options: [
+            "Making problems more complex",
+            "Breaking problems into smaller parts",
+            "Ignoring important details",
+            "Finding random solutions"
+          ],
+          answer: 1,
+          explanation: "Decomposition means breaking down problems into smaller, manageable parts to make them easier to solve."
+        },
+        {
+          question: "Which is an example of pattern recognition?",
+          options: [
+            "Following a recipe exactly",
+            "Noticing similar steps in different math problems",
+            "Creating a flowchart",
+            "Writing pseudocode"
+          ],
+          answer: 1,
+          explanation: "Pattern recognition involves identifying similarities between different problems to apply known solutions."
+        }
+      ],
+      algorithms: [
+        {
+          question: "What is the main advantage of binary search?",
+          options: [
+            "Works on unsorted data",
+            "Faster search in sorted data (O(log n))",
+            "Easier to implement than linear search",
+            "Uses less memory"
+          ],
+          answer: 1,
+          explanation: "Binary search is efficient (O(log n)) but requires sorted data as input."
+        },
+        {
+          question: "Which algorithm uses a 'divide and conquer' approach?",
+          options: [
+            "Bubble sort",
+            "Linear search",
+            "Merge sort",
+            "Selection sort"
+          ],
+          answer: 2,
+          explanation: "Merge sort divides the array into halves, sorts them, and merges them back together."
+        }
+      ],
+      dataStructures: [
+        {
+          question: "What principle does a stack follow?",
+          options: [
+            "First-In-First-Out (FIFO)",
+            "Last-In-First-Out (LIFO)",
+            "Random access",
+            "Priority-based"
+          ],
+          answer: 1,
+          explanation: "Stacks follow Last-In-First-Out (LIFO), like a stack of plates."
+        },
+        {
+          question: "What's the main advantage of a hash table?",
+          options: [
+            "Maintains sorted order",
+            "Fast average-case lookup (O(1))",
+            "Easy to implement",
+            "Uses minimal memory"
+          ],
+          answer: 1,
+          explanation: "Hash tables provide average O(1) time complexity for search operations."
+        }
+      ]
+    };
+
+    // Combine all questions
+    questionBanks.all = [
+      ...questionBanks.concepts,
+      ...questionBanks.algorithms,
+      ...questionBanks.dataStructures
+    ];
+
+    let currentQuestions = [];
+    let userAnswers = [];
+
+    // DOM elements
+    const startScreen = document.getElementById('startScreen');
+    const quizContainer = document.getElementById('quizContainer');
+    const questionArea = document.getElementById('questionArea');
+    const results = document.getElementById('results');
+    const scoreElement = document.getElementById('score');
+    const totalElement = document.getElementById('total');
+    const answerFeedback = document.getElementById('answerFeedback');
+
+    // Initialize quiz
+    document.getElementById('allBtn').addEventListener('click', () => startQuiz('all'));
+    document.getElementById('conceptsBtn').addEventListener('click', () => startQuiz('concepts'));
+    document.getElementById('algorithmsBtn').addEventListener('click', () => startQuiz('algorithms'));
+    document.getElementById('dataBtn').addEventListener('click', () => startQuiz('dataStructures'));
+    document.getElementById('submitBtn').addEventListener('click', showResults);
+    document.getElementById('newQuizBtn').addEventListener('click', resetQuiz);
+
+    function startQuiz(bank) {
+      currentQuestions = [...questionBanks[bank]].sort(() => 0.5 - Math.random()).slice(0, 5);
+      userAnswers = new Array(currentQuestions.length).fill(null);
+      
+      startScreen.style.display = 'none';
+      quizContainer.style.display = 'block';
+      displayAllQuestions();
+    }
+
+    function displayAllQuestions() {
+      questionArea.innerHTML = '';
+      
+      currentQuestions.forEach((question, qIndex) => {
+        const questionElement = document.createElement('div');
+        questionElement.className = 'question';
+        questionElement.innerHTML = `
+          <h3>${qIndex + 1}. ${question.question}</h3>
+          <div class="options">
+            ${question.options.map((option, aIndex) => `
+              <div class="quiz-option" onclick="selectAnswer(${qIndex}, ${aIndex})">
+                <input type="radio" name="q${qIndex}" id="q${qIndex}_${aIndex}">
+                <label for="q${qIndex}_${aIndex}">${option}</label>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        questionArea.appendChild(questionElement);
+      });
+    }
+
+    function selectAnswer(qIndex, aIndex) {
+      userAnswers[qIndex] = aIndex;
+      
+      // Update visual selection
+      const questionDiv = document.querySelectorAll('.question')[qIndex];
+      questionDiv.querySelectorAll('.quiz-option').forEach((opt, idx) => {
+        opt.classList.toggle('selected', idx === aIndex);
+      });
+    }
+
+    function showResults() {
+      // Check if all questions answered
+      if (userAnswers.some(a => a === null)) {
+        alert('Please answer all questions before submitting!');
+        return;
+      }
+
+      // Calculate score
+      let score = 0;
+      currentQuestions.forEach((q, index) => {
+        if (userAnswers[index] === q.answer) {
+          score++;
+        }
+      });
+
+      // Display results
+      quizContainer.style.display = 'none';
+      results.style.display = 'block';
+      scoreElement.textContent = score;
+      totalElement.textContent = currentQuestions.length;
+
+      // Show detailed feedback
+      answerFeedback.innerHTML = '';
+      currentQuestions.forEach((q, index) => {
+        const isCorrect = userAnswers[index] === q.answer;
+        answerFeedback.innerHTML += `
+          <div class="feedback-item ${isCorrect ? 'correct' : 'incorrect'}">
+            <p><strong>Question ${index + 1}:</strong> ${q.question}</p>
+            <p>Your answer: ${q.options[userAnswers[index]]}</p>
+            ${!isCorrect ? `<p>Correct answer: ${q.options[q.answer]}</p>` : ''}
+            <p>Explanation: ${q.explanation}</p>
+          </div>
+        `;
+      });
+
+      // Overall feedback
+      const percentage = (score / currentQuestions.length) * 100;
+      let feedbackMessage = '';
+      if (percentage >= 80) {
+        feedbackMessage = "Excellent! You've mastered these concepts!";
+      } else if (percentage >= 50) {
+        feedbackMessage = "Good job! Review the concepts and try again.";
+      } else {
+        feedbackMessage = "Keep practicing! The flashcards can help you review.";
+      }
+      
+      answerFeedback.innerHTML += `<div class="overall-feedback">${feedbackMessage}</div>`;
+    }
+
+    function resetQuiz() {
+      results.style.display = 'none';
+      startScreen.style.display = 'block';
+    }
+
+    // Make selectAnswer available globally
+    window.selectAnswer = selectAnswer;
+  </script>
+
+  <style>
+    /* Additional styles for the enhanced quiz */
+    .question {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .quiz-option {
+      padding: 10px 15px;
+      margin: 5px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .quiz-option:hover {
+      background-color: #f0f4f8;
+    }
+    
+    .quiz-option.selected {
+      background-color: #4fc3f7;
+      color: white;
+    }
+    
+    .feedback-item {
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    
+    .correct {
+      background-color: rgba(76, 175, 80, 0.1);
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .incorrect {
+      background-color: rgba(244, 67, 54, 0.1);
+      border-left: 4px solid #F44336;
+    }
+    
+    .overall-feedback {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f5f7fa;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+  </style>
+</body>
+</html>

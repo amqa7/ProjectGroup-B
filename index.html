@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Computational Thinking</title>
+  <meta name="description" content="Learn computational thinking concepts including decomposition, pattern recognition, abstraction, and algorithm design">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="parallax-bg"></div>
+  <header>
+    <h1>COMP11012: Computational Thinking</h1>
+    <p class="subtitle">Developing Essential Problem-Solving Skills for Computer Science</p>
+    <nav>
+      <a href="index.html" class="active">Home</a>
+      <a href="concepts.html">Core Concepts</a>
+      <a href="flashcards.html">Flashcards</a>
+      <a href="quiz.html">Quiz</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="card intro-card">
+      <h2>Welcome to Computational Thinking</h2>
+      <p>This learning resource supports the COMP11012 unit, helping you develop essential problem-solving skills that form the foundation of computer science.</p>
+      <p>Computational thinking involves:</p>
+      <ul>
+        <li>Breaking down complex problems into manageable parts (decomposition)</li>
+        <li>Recognizing patterns and similarities between problems</li>
+        <li>Abstracting away unnecessary details to focus on key elements</li>
+        <li>Designing and analyzing efficient algorithms</li>
+        <li>Understanding how data is organized and processed</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Course Handbook</h2>
+      <p>Access the complete course handbook for detailed learning objectives and resources:</p>
+      <iframe src="Handbook.pdf" class="pdf-viewer"></iframe>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="Handbook.pdf" download class="btn">Download Handbook</a>
+      </div>
+    
+  </main>
+
+  <footer>
+    <p>&copy; 2025 COMP11012 Computational Thinking - The University of Manchester</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const parallaxBg = document.querySelector('.parallax-bg');
+      const parallaxStrength = 0.3; // Adjust this value for stronger/weaker effect
+      
+      window.addEventListener('scroll', function() {
+        const scrollPosition = window.pageYOffset;
+        parallaxBg.style.transform = `translateY(${scrollPosition * parallaxStrength}px)`;
+      });
+    });
+  </script>
+</body>
+</html>
