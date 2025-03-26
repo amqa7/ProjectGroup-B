@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards | Computational Thinking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Interactive Flashcards</h1>
+    <p class="subtitle">Practice and reinforce your understanding of computational thinking concepts</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="concepts.html">Core Concepts</a>
+      <a href="flashcards.html" class="active">Flashcards</a>
+      <a href="quiz.html">Quiz</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>Flashcard Practice</h2>
+      <p>Click on any flashcard to flip it and reveal the answer. Use the buttons below to get new sets of questions or focus on specific topics.</p>
+      
+      <div class="btn-group" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button id="newSetBtn" class="btn">Get New Questions</button>
+        <button id="conceptsBtn" class="btn btn-outline">Computational Thinking</button>
+        <button id="algorithmsBtn" class="btn btn-outline">Algorithms</button>
+        <button id="dataStructuresBtn" class="btn btn-outline">Data Structures</button>
+      </div>
+    </div>
+
+    <div id="flashcardContainer" class="content-grid">
+      <!-- Flashcards will be inserted here by JavaScript -->
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 COMP11012 Computational Thinking - The University of Manchester</p>
+  </footer>
+
+  <script>
+    // Comprehensive question banks
+    const questionBanks = {
+      concepts: [
+        { q: "What is decomposition in computational thinking?", 
+          a: "The process of breaking down complex problems into smaller, more manageable parts to make them easier to solve." },
+        { q: "What is pattern recognition?", 
+          a: "Identifying similarities or patterns among different problems to apply known solutions to new problems." },
+        { q: "Define abstraction in computational thinking.", 
+          a: "Focusing on the important information only, ignoring irrelevant details to simplify problem solving." },
+        { q: "What is an algorithm?", 
+          a: "A step-by-step procedure or set of instructions to solve a problem or complete a task." },
+        { q: "What is logical reasoning in computational thinking?", 
+          a: "Using systematic thinking to analyze problems, make deductions, and arrive at solutions based on given information." },
+        { q: "What does evaluation mean in computational thinking?", 
+          a: "Assessing whether a solution is correct, efficient, and fit for purpose." },
+        { q: "What is generalization in computational thinking?", 
+          a: "Adapting solutions to work for a wider range of problems beyond the original specific case." },
+        { q: "What is automation in computational thinking?", 
+          a: "Developing solutions that can be executed by computers without human intervention." }
+      ],
+      algorithms: [
+        { q: "What is the time complexity of linear search?", 
+          a: "O(n) - it may have to check every element in the worst case." },
+        { q: "What is the main advantage of binary search over linear search?", 
+          a: "Binary search has O(log n) time complexity, much faster than linear search for large datasets." },
+        { q: "What is the difference between BFS and DFS?", 
+          a: "Breadth-First Search explores all neighbors first, while Depth-First Search goes as deep as possible first." },
+        { q: "What is a greedy algorithm?", 
+          a: "An algorithm that makes the locally optimal choice at each stage with the hope of finding a global optimum." },
+        { q: "What is dynamic programming?", 
+          a: "A method for solving complex problems by breaking them down into simpler subproblems and storing their solutions." },
+        { q: "What is the time complexity of bubble sort in the worst case?", 
+          a: "O(n²) - it may have to make n passes through n elements." },
+        { q: "What is the main characteristic of a divide and conquer algorithm?", 
+          a: "It recursively breaks down a problem into subproblems of the same type until simple enough to solve directly." },
+        { q: "What is the difference between Dijkstra's and A* algorithms?", 
+          a: "A* uses heuristics to prioritize paths likely to lead to the goal, making it more efficient for pathfinding." }
+      ],
+      dataStructures: [
+        { q: "What is the main advantage of a hash table?", 
+          a: "Average case O(1) time complexity for insert, delete, and search operations." },
+        { q: "When would you use a stack instead of a queue?", 
+          a: "When you need Last-In-First-Out (LIFO) behavior, like in function calls or undo operations." },
+        { q: "What is the time complexity of accessing an element in an array by index?", 
+          a: "O(1) - constant time as it can be calculated directly from the memory address." },
+        { q: "What is a binary tree?", 
+          a: "A tree data structure where each node has at most two children, referred to as the left and right child." },
+        { q: "What is the difference between an array and a linked list?", 
+          a: "Arrays have fixed size and direct access, while linked lists have dynamic size and sequential access." },
+        { q: "What is a graph in computer science?", 
+          a: "A collection of nodes (vertices) connected by edges, which can be directed or undirected." },
+        { q: "What is the advantage of a balanced binary search tree?", 
+          a: "It maintains O(log n) time complexity for search, insert, and delete operations." },
+        { q: "What is a heap data structure used for?", 
+          a: "Efficiently finding and removing the minimum (min-heap) or maximum (max-heap) element." }
+      ]
+    };
+
+    let currentBank = "concepts";
+    const flashcardContainer = document.getElementById('flashcardContainer');
+    const newSetBtn = document.getElementById('newSetBtn');
+    const conceptsBtn = document.getElementById('conceptsBtn');
+    const algorithmsBtn = document.getElementById('algorithmsBtn');
+    const dataStructuresBtn = document.getElementById('dataStructuresBtn');
+
+    function createFlashcards() {
+      flashcardContainer.innerHTML = '';
+      
+      // Get 6 random questions from the current bank
+      const shuffled = [...questionBanks[currentBank]].sort(() => 0.5 - Math.random());
+      const selectedQuestions = shuffled.slice(0, 6);
+      
+      selectedQuestions.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'card flashcard';
+        card.innerHTML = `
+          <h3>${item.q}</h3>
+          <div class="answer">${item.a}</div>
+        `;
+        card.addEventListener('click', () => {
+          card.classList.toggle('show');
+        });
+        flashcardContainer.appendChild(card);
+      });
+    }
+
+    // Event listeners for buttons
+    newSetBtn.addEventListener('click', createFlashcards);
+    
+    conceptsBtn.addEventListener('click', () => {
+      currentBank = "concepts";
+      conceptsBtn.classList.add('btn');
+      conceptsBtn.classList.remove('btn-outline');
+      algorithmsBtn.classList.add('btn-outline');
+      algorithmsBtn.classList.remove('btn');
+      dataStructuresBtn.classList.add('btn-outline');
+      dataStructuresBtn.classList.remove('btn');
+      createFlashcards();
+    });
+    
+    algorithmsBtn.addEventListener('click', () => {
+      currentBank = "algorithms";
+      algorithmsBtn.classList.add('btn');
+      algorithmsBtn.classList.remove('btn-outline');
+      conceptsBtn.classList.add('btn-outline');
+      conceptsBtn.classList.remove('btn');
+      dataStructuresBtn.classList.add('btn-outline');
+      dataStructuresBtn.classList.remove('btn');
+      createFlashcards();
+    });
+    
+    dataStructuresBtn.addEventListener('click', () => {
+      currentBank = "dataStructures";
+      dataStructuresBtn.classList.add('btn');
+      dataStructuresBtn.classList.remove('btn-outline');
+      conceptsBtn.classList.add('btn-outline');
+      conceptsBtn.classList.remove('btn');
+      algorithmsBtn.classList.add('btn-outline');
+      algorithmsBtn.classList.remove('btn');
+      createFlashcards();
+    });
+
+    // Initialize with concept flashcards
+    createFlashcards();
+  </script>
+</body>
+</html>
